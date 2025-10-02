@@ -1,58 +1,57 @@
 package op
 
 import (
-	"iter"
-
 	"github.com/raumanzug/gr-glushkov/glushkov"
 
 	"github.com/raumanzug/gr-set/set"
 	"github.com/raumanzug/gr-set/simple"
 )
 
-type rabinScottConstruction[TState comparable, TAction any] struct {
-	nfa glushkov.INFA[TState, TAction]
+type rabinScottConstruction[TState comparable, TAction comparable] struct {
+	nfa   glushkov.INFA[TState, TAction]
+	state set.ISet[TState]
 }
 
 // RabinScott generates an object which can parse strings against the
 // regular language related to it.
-func RabinScott[TState comparable, TAction any](
+func RabinScott[TState comparable, TAction comparable](
 	nfa glushkov.INFA[TState, TAction],
 ) glushkov.IAutomaton[TAction] {
 	retval := rabinScottConstruction[TState, TAction]{
-		nfa: nfa,
+		nfa:   nfa,
+		state: simple.NewSet[TState](),
 	}
+	retval.state.Add(nfa.Start())
 
 	return &retval
 }
 
-type powerState[TState any] struct {
-	body set.ISet[TState]
+func (pAutomaton *rabinScottConstruction[TState, TAction]) IsFinal() bool {
+	return !pAutomaton.state.IsDisjoint(pAutomaton.nfa.Finals())
 }
 
-func (pAutomaton *rabinScottConstruction[TState, TAction]) Match(
-	in iter.Seq[TAction],
-) bool {
-	currentPowerstate := powerState[TState]{
-		body: simple.NewSet[TState](),
+func (pAutomaton *rabinScottConstruction[TState, TAction]) Next(
+	action TAction,
+) {
+	nextPowerState := simple.NewSet[TState]()
+	for leftState := range pAutomaton.state.Generator() {
+		nextPowerState.AddSet(
+			pAutomaton.nfa.Next(leftState, action),
+		)
 	}
-	currentPowerstate.body.Add(pAutomaton.nfa.Start())
 
-	for action := range in {
-		_currentStateBody := simple.NewSet[TState]()
-		for leftState := range currentPowerstate.body.Generator() {
+	pAutomaton.state = nextPowerState
+}
 
-			_currentStateBody.AddSet(
-				pAutomaton.nfa.Next(
-					leftState,
-					action,
-				),
-			)
-
+func (pAutomaton *rabinScottConstruction[TState, TAction]) PermittedActions() set.ISet[TAction] {
+	retval := simple.NewSet[TAction]()
+	for leftState := range pAutomaton.state.Generator() {
+		for action := range pAutomaton.nfa.Actions().Generator() {
+			if !pAutomaton.nfa.Next(leftState, action).IsEmpty() {
+				retval.Add(action)
+			}
 		}
-		currentPowerstate.body = _currentStateBody
 	}
 
-	return !currentPowerstate.body.IsDisjoint(
-		pAutomaton.nfa.Finals(),
-	)
+	return retval
 }

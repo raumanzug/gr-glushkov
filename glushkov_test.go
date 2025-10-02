@@ -1,7 +1,6 @@
 package gr
 
 import (
-	"slices"
 	"testing"
 
 	"github.com/raumanzug/gr-glushkov/op"
@@ -26,46 +25,161 @@ func Test_A(t *testing.T) {
 	glushkovData := op.UnionGlushkov(a1, a2)
 
 	nfa := op.Glushkov(actions, glushkovData)
-	automaton := op.RabinScott(nfa)
 
-	if !automaton.Match(slices.Values([]rune("ab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "ab")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune("abab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abab")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune("ac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "ac")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune(""))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("acab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "acab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("abac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abac")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aba"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aba")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aca"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aca")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("a"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "a")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('b')
+		targetPermittedActions.Add('c')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aa"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aa")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 }
 
@@ -88,46 +202,173 @@ func Test_B(t *testing.T) {
 	op.ConcatGlushkov(&glushkovData, a3)
 
 	nfa := op.Glushkov(actions, glushkovData)
-	automaton := op.RabinScott(nfa)
 
-	if automaton.Match(slices.Values([]rune("ab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "ab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("abab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("ac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "ac")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune(""))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("acab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "acab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("abac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abac")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('a')
+		targetPermittedActions.Add('b')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune("aba"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aba")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('b')
+		targetPermittedActions.Add('c')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune("aca"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aca")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('b')
+		targetPermittedActions.Add('c')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if !automaton.Match(slices.Values([]rune("a"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "a")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+		targetPermittedActions.Add('b')
+		targetPermittedActions.Add('c')
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aa"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aa")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 }
 
@@ -141,34 +382,110 @@ func Test_Epsilon(t *testing.T) {
 	glushkovData := op.EpsilonGlushkov[rune]()
 
 	nfa := op.Glushkov(actions, glushkovData)
-	automaton := op.RabinScott(nfa)
 
-	if !automaton.Match(slices.Values([]rune(""))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "")
+
+		if !isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("acab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "acab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("abac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abac")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aba"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aba")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aca"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aca")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("a"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "a")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aa"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aa")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 }
 
@@ -182,33 +499,109 @@ func Test_Zero(t *testing.T) {
 	glushkovData := op.UnionGlushkov[rune]()
 
 	nfa := op.Glushkov(actions, glushkovData)
-	automaton := op.RabinScott(nfa)
 
-	if automaton.Match(slices.Values([]rune(""))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("acab"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "acab")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("abac"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "abac")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aba"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aba")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aca"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aca")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("a"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "a")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 
-	if automaton.Match(slices.Values([]rune("aa"))) {
-		t.Fail()
+	{
+		automaton := op.RabinScott(nfa)
+		isFinal, permittedActions := parse(automaton, "aa")
+
+		if isFinal {
+			t.Fail()
+		}
+
+		targetPermittedActions := simple.NewSet[rune]()
+
+		if !permittedActions.Eq(targetPermittedActions) {
+			t.Fail()
+		}
 	}
 }

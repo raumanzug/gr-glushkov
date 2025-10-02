@@ -2,11 +2,11 @@ package gr
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/raumanzug/gr-glushkov/glushkov"
 	"github.com/raumanzug/gr-glushkov/op"
 
+	"github.com/raumanzug/gr-set/set"
 	"github.com/raumanzug/gr-set/simple"
 )
 
@@ -45,8 +45,17 @@ func compileRegex() glushkov.IAutomaton[rune] {
 
 // Parses the sentence string using the automaton specified in the
 // automaton argument.
-func parse(automaton glushkov.IAutomaton[rune], sentence string) bool {
-	return automaton.Match(slices.Values([]rune(sentence)))
+func parse(
+	automaton glushkov.IAutomaton[rune],
+	sentence string,
+) (isFinal bool, permittedActions set.ISet[rune]) {
+	for _, rune := range []rune(sentence) {
+		automaton.Next(rune)
+	}
+	isFinal = automaton.IsFinal()
+	permittedActions = automaton.PermittedActions()
+
+	return
 }
 
 func Example() {
@@ -55,6 +64,7 @@ func Example() {
 	automaton := compileRegex()
 
 	// parse a sentence using this automaton:
-	fmt.Println(parse(automaton, "abab"))
+	isAccepted, _ := parse(automaton, "abab")
+	fmt.Println(isAccepted)
 	// Output: true
 }
